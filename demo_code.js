@@ -55,6 +55,7 @@
 	 * let Person = function() {}
 	 */
 	function Person() {}
+	Person.prototype.name = "Nicholas"
 
 	/**
 	 * 声明之后，构造函数就有了一个与之关联的原型对象
@@ -125,7 +126,69 @@
 	 * instanceof检查实例的原型链中
 	 * 是否包含指定构造函数的原型
 	 */
-	console.log(person1 instanceof Person); // true
-	console.log(person1 instanceof Object); // true
-	console.log(Person.prototype instanceof Object); // true
+	console.log(person1 instanceof Person) // true
+	console.log(person1 instanceof Object) // true
+	console.log(Person.prototype instanceof Object) // true
+
+	/**
+	 * isPrototypeOf()方法会在传入参数的[[Prototype]]指向调用它的对象时返回true
+	 */
+	console.log(Person.prototype.isPrototypeOf(person1)) // true
+	console.log(Person.prototype.isPrototypeOf(person2)) // true
+
+	/**
+	 * Object.getPrototypeOf()返回参数的内部特性[[prototype]]的值（传入对象的原型对象）
+	 */
+
+	console.log(Object.getPrototypeOf(person1) === Person.prototype)
+
+	{
+		// ========= hasOwnProperty =========
+		console.log(person1.hasOwnProperty("name")) // false
+		person1.name = "Grey"
+		console.log(person1.hasOwnProperty("name")) // true
+		console.log(person1.name) // Grey 来自实例
+		delete person1.name
+		console.log(person1.hasOwnProperty("name")) // false
+		console.log(person1.name) // Nicholas 来自原型
+	}
+
+	// 确定某个属性是否存在于原型上
+	function hasPrototypeProperty(object, name) {
+		return !object.hasOwnProperty(name) && name in object
+	}
+}
+
+// =========== 8.2.5 对象迭代 ===========
+{
+	const o = {
+		foo: "bar",
+		baz: 1,
+		qux: {},
+	}
+
+	console.log(Object.values(o)) // ["bar", 1, {}]
+
+	console.log(Object.entries(o)) // [["foo", "bar"], ["baz", 1], ["qux", {}]]
+
+	{
+		const o = {
+			qux: {},
+		}
+
+		console.log(Object.values(o)[0] === o.qux) // true 执行对象的浅复制
+		console.log(Object.entries(o)[0][1] == o.qux) // true 执行对象的浅复制
+	}
+
+	{
+		// 符号属性会被忽略
+		const sym = Symbol()
+		const o = {
+			[sym]: "foo",
+		}
+
+		console.log(Object.values(o)) // []
+
+		console.log(Object.entries(o)) // []
+	}
 }
