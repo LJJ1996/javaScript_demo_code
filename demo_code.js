@@ -192,3 +192,33 @@
 		console.log(Object.entries(o)) // []
 	}
 }
+
+// =========== 8.3 继承 ===========
+
+// =========== 8.3.1 原型链 ===========
+
+{
+	function SuperType() {
+		this.property = true;
+	}
+
+	SuperType.prototype.getSuperValue = function () {
+		return this.property;
+	}
+
+	function SubType () {
+		this.subProperty = false;
+	}
+
+	// 继承SuperType
+	SubType.prototype = new SuperType();
+
+	SubType.prototype.getSubValue = function() {
+		return this.subProperty;
+	}
+
+	let instance = new SubType();
+
+	console.log(instance.getSuperValue()); // true
+
+}
