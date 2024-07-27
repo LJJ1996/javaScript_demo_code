@@ -354,6 +354,82 @@
 	}
 }
 
-
-
 // =========== 8.4 类 ===========
+
+// =========== 8.4.2 构造函数 ===========
+{
+	class Person {
+		constructor(override) {
+			this.foo = "foo"
+			if (override) {
+				return {
+					bar: "bar",
+				}
+			}
+		}
+	}
+
+	let p1 = new Person(),
+		p2 = new Person(true)
+
+	console.log(p1) // Person { foo: 'foo' }
+	console.log(p1 instanceof Person) // true
+
+	console.log(p2) // { bar: 'bar' }
+	console.log(p2 instanceof Person) // false
+}
+
+// =========== 8.4.3 实例、原型和类成员 ===========
+{
+	class Person {
+		constructor() {
+			// 添加到this的所有内容都会存在于不同的实例上
+			this.locate = () => console.log("instance")
+		}
+
+		// 在类块中定义的所有内容都会定义在类的原型上
+		locate() {
+			console.log("prototype")
+		}
+
+		// 定义在类本身上
+		static locate() {
+			console.log("class", this)
+		}
+	}
+
+	let p = new Person()
+	p.locate() // instance
+	Person.prototype.locate() // prototype
+	Person.locate() // class, class Person {}
+}
+
+{
+	class Person {
+		constructor() {
+			this.nicknames = ["Jack", "Jake", "J-Dog"]
+		}
+		// 生成器方法
+		*[Symbol.iterator]() {
+			yield *this.nicknames.entries()
+			// 等同于
+			// for(let item of this.nicknames.entries()){
+			// 	yield item
+			// }
+		}
+
+		// 也可以只返回迭代器实例
+		// [Symbol.iterator]() {
+		// 	return this.nicknames.entries()
+		// }
+	}
+
+	let p = new Person()
+
+	for (let [idx, nicknames] of p) {
+		console.log(nicknames)
+	}
+	// Jack
+	// Jake
+	// J-Dog
+}
