@@ -199,26 +199,161 @@
 
 {
 	function SuperType() {
-		this.property = true;
+		this.property = true
 	}
 
 	SuperType.prototype.getSuperValue = function () {
-		return this.property;
+		return this.property
 	}
 
-	function SubType () {
-		this.subProperty = false;
+	function SubType() {
+		this.subProperty = false
 	}
 
 	// 继承SuperType
-	SubType.prototype = new SuperType();
+	SubType.prototype = new SuperType()
 
-	SubType.prototype.getSubValue = function() {
-		return this.subProperty;
+	SubType.prototype.getSubValue = function () {
+		return this.subProperty
 	}
 
-	let instance = new SubType();
+	let instance = new SubType()
 
-	console.log(instance.getSuperValue()); // true
-
+	console.log(instance.getSuperValue()) // true
 }
+
+// =========== 8.3.2 盗用构造函数（对象伪装/经典继承） ===========
+
+{
+	function SuperType() {
+		this.colors = ["red", "blue"]
+	}
+
+	function SubType() {
+		// 继承SuperType
+		// 通过call()（或apply()）方法，SuperType构造函数在
+		// 为SubType的实例创建的新对象的上下文中执行了
+		SuperType.call(this)
+	}
+
+	let instance1 = new SubType()
+	instance1.colors.push("black")
+	console.log(instance1.colors) // ["red", "blue", "black"]
+
+	let instance2 = new SubType()
+	console.log(instance2.colors) // 	["red", "blue"]
+}
+
+// =========== 8.3.3 组合继承（原型链+盗用构造函数） ===========
+
+{
+	function SuperType(name) {
+		this.name = name
+		this.colors = ["red", "blue", "green"]
+	}
+
+	SuperType.prototype.sayName = function () {
+		console.log(this.name)
+	}
+
+	function SubType(name, age) {
+		// 继承SuperType的属性
+		SuperType.call(this, name)
+		this.age = age
+	}
+	// 继承方法
+	SubType.prototype = new SuperType()
+
+	SubType.prototype.sayAge = function () {
+		console.log(this.age)
+	}
+
+	let instance1 = new SubType("Nicholas", 29)
+	instance1.colors.push("black")
+	console.log(instance1.colors) // ['red', 'blue', 'green', 'black']
+	instance1.sayName() // "Nicholas"
+	instance1.sayAge() // 29
+
+	let instance2 = new SubType("Grey", 27)
+	console.log(instance2.colors) // ["red", "blue", 'green']
+	instance2.sayName() // "Grey"
+	instance2.sayAge() // 27
+}
+
+// =========== 8.3.4 原型式继承 ===========
+{
+	// object()是对传入的对象执行了一次浅复制
+	function object(o) {
+		function F() {}
+		F.prototype = o
+		return new F()
+	}
+
+	// ECMAScript 5通过增加Object.create()方法将原型式继承的概念规范化
+	// 只有一个参数时，Object.create()与object方法效果相同
+	let person = {
+		name: "Nicholas",
+		friends: ["Shelby", "Court", "Van"],
+	}
+	let anotherPerson = Object.create(person, {
+		name: {
+			value: "Greg",
+		},
+	})
+
+	console.log(anotherPerson.name) // Greg
+}
+
+// =========== 8.3.5 寄生式继承 ===========
+{
+	function createAnother(original) {
+		let clone = object(original) // 通过调用函数创建一个新对象
+		clone.sayHi = function () {
+			// 以某种方式增强这个对象
+			console.log("hi")
+		}
+		return clone // 返回这个对象
+	}
+
+	let person = {
+		name: "Nicholas",
+		friends: ["Shelby", "Court", "Van"],
+	}
+
+	let anotherPerson = createAnother(person)
+	anotherPerson.sayHi() // "hi"
+}
+
+// =========== 8.3.5 寄生式组合继承 ===========
+{
+	function inheritPrototype(subType, superType) {
+		let prototype = object(superType.prototype) // 创建对象
+		prototype.constructor = subType // 增强对象
+		subType.prototype = prototype // 复制对象
+	}
+
+	function SuperType(name) {
+		this.name = name
+		this.colors = ["red", "blue", "green"]
+	}
+
+	SuperType.prototype.sayName = function () {
+		console.log(this.name)
+	}
+
+	function SubType(name, age) {
+		// 继承SuperType的属性
+		SuperType.call(this, name)
+		this.age = age
+	}
+
+	inheritPrototype(SubType, SuperType)
+
+	SubType.prototype.sayHi = function () {
+		console.log(this.age)
+	}
+}
+
+
+
+// =========== 8.4 类 ===========
