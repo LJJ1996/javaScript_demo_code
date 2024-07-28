@@ -411,7 +411,7 @@
 		}
 		// 生成器方法
 		*[Symbol.iterator]() {
-			yield *this.nicknames.entries()
+			yield* this.nicknames.entries()
 			// 等同于
 			// for(let item of this.nicknames.entries()){
 			// 	yield item
@@ -432,4 +432,60 @@
 	// Jack
 	// Jake
 	// J-Dog
+}
+
+// =========== 8.4.4 继承 ===========
+{
+	class Vehicle {
+		constructor() {
+			this.hasEngine = true
+		}
+
+		static identify() {
+			console.log("Vehicle")
+		}
+	}
+
+	class Bus extends Vehicle {
+		constructor() {
+			// 不要在调用super()之前引用this，否则会抛出ReferenceError
+			super() // 相当于super.constructor()
+
+			console.log(this instanceof Vehicle) // true
+			console.log(this) // Bus { hasEngine: true }
+		}
+
+		static identify() {
+			super.identify()
+		}
+	}
+
+	Bus.identify() // "Vehicle"
+}
+
+{
+	// 抽象基类
+	class Vehicle {
+		constructor() {
+			console.log(new.target)
+			if (new.target === Vehicle) {
+				throw new Error("Vehicle cannot be directly instantiated")
+			}
+
+			if (!this.foo) {
+				throw new Error("Inheriting class must define foo()")
+			}
+
+			console.log("success")
+		}
+	}
+
+	class Bus extends Vehicle {
+		foo() {}
+	}
+
+	class Van extends Vehicle {}
+
+	new Bus() // "success"
+	new Van() // Error: Inheriting class must define foo()
 }
