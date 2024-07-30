@@ -102,12 +102,35 @@
 		},
 
 		set() {
-      // Reflect 重建 原始行为
+			// Reflect 重建 原始行为
 			return Reflect.set
 		},
 	}
 
 	const proxy = new Proxy(target, handler)
-  // 创建捕获所有方法，将每个方法转发给对应反射API的空代理
+	// 创建捕获所有方法，将每个方法转发给对应反射API的空代理
 	const proxy1 = new Proxy(target, Reflect)
+}
+
+{
+	// 可撤销代理
+	const target = {
+		foo: "bar",
+	}
+
+	const handler = {
+		// 捕获器在处理程序对象中以方法名为键
+		get() {
+			return "intercepted"
+		},
+	}
+
+	const { proxy, revoke } = new Proxy.revocable(target, handler)
+
+	console.log(proxy.foo) // intercepted
+	console.log(target.foo) // bar
+
+	revoke()
+
+	console.log(proxy.foo) // TypeError
 }
