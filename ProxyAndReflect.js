@@ -134,3 +134,40 @@
 
 	console.log(proxy.foo) // TypeError
 }
+
+// 代理捕获13种不同的基本操作
+{
+	const myTarget = {}
+
+	const proxy = new Proxy(myTarget, {
+		// get()
+		get(target, property, receiver) {
+			console.log("get()")
+			return Reflect.get(...arguments)
+		},
+		// set()
+		set(target, property, value, receiver) {
+			console.log("set()")
+			return Reflect.set(...arguments)
+		},
+		// has
+		has(target, property) {
+			console.log("has()")
+			return Reflect.has(...arguments)
+		},
+
+		defineProperty(target, property, descriptor) {
+			console.log("defineProperty")
+			return Reflect.defineProperty(...arguments)
+		},
+	})
+
+	proxy.foo // get()
+	proxy.foo = "bar" // set()
+	"foo" in proxy // has()
+
+	Object.defineProperty(proxy, "foo", {
+		value: "bar",
+	})
+	// defineProperty
+}
