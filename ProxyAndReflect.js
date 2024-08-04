@@ -155,10 +155,50 @@
 			console.log("has()")
 			return Reflect.has(...arguments)
 		},
-
+		// defineProperty
 		defineProperty(target, property, descriptor) {
 			console.log("defineProperty")
 			return Reflect.defineProperty(...arguments)
+		},
+		// getOwnPropertyDescriptor()
+		getOwnPropertyDescriptor(target, property) {
+			console.log("getOwnPropertyDescriptor()")
+			return Reflect.getOwnPropertyDescriptor(...arguments)
+		},
+		// deleteProperty()
+		deleteProperty(target, property) {
+			console.log("deleteProperty()")
+			return Reflect.deleteProperty(...arguments)
+		},
+		// ownkeys
+		ownKeys(target) {
+			console.log("ownKeys()")
+			return Reflect.ownKeys(...arguments)
+		},
+		// getPrototypeOf()
+		getPrototypeOf(target) {
+			console.log("getPrototypeOf()")
+			return Reflect.getPrototypeOf(...arguments)
+		},
+		// isExtensible
+		isExtensible(target) {
+			console.log("isExtensible()")
+			return Reflect.isExtensible(...arguments)
+		},
+		// preventExtensions
+		preventExtensions(target) {
+			console.log("preventExtensions()")
+			return Reflect.preventExtensions(...arguments)
+		},
+		// apply
+		apply(target, thisArg, ...argumentsList) {
+			console.log("apply()")
+			return Reflect.apply(...arguments)
+		},
+		// construct
+		construct(target, argumentsList, newTarget) {
+			console.log("construct()")
+			return Reflect.construct(...arguments)
 		},
 	})
 
@@ -167,7 +207,38 @@
 	"foo" in proxy // has()
 
 	Object.defineProperty(proxy, "foo", {
+		// defineProperty
 		value: "bar",
 	})
-	// defineProperty
+
+	Object.getOwnPropertyDescriptor(proxy, "foo") // getOwnPropertyDescriptor()
+	delete proxy.foo // deleteProperty()
+	Object.keys(proxy) // ownKeys()
+
+	Object.getPrototypeOf(proxy) // getPrototypeOf()
+
+	Object.isExtensible(proxy)
+
+	Object.preventExtensions(proxy)
+
+	{
+		// 下面两种代理捕获，apply的target必须为函数，construct的target必须为构造函数
+		const myTarget = function () {} // 箭头函数不可用作构造函数
+
+		const proxy = new Proxy(myTarget, {
+			// apply
+			apply(target, thisArg, ...argumentsList) {
+				console.log("apply()")
+				return Reflect.apply(...arguments)
+			},
+			// construct
+			construct(target, argumentsList, newTarget) {
+				console.log("construct()")
+				return Reflect.construct(...arguments)
+			},
+		})
+		proxy() // apply
+
+		new proxy() // construct
+	}
 }
