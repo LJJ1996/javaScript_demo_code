@@ -40,12 +40,32 @@
 }
 
 {
-  // 严格模式，arguments赋值不影响传入参数的值
-  function doAdd(num1, num2) {
-    'use strict'
-    arguments[1] = 10;
-    console.log(arguments[0] + num2);
-  }
+	// 严格模式，arguments赋值不影响传入参数的值
+	function doAdd(num1, num2) {
+		"use strict"
+		arguments[1] = 10
+		console.log(arguments[0] + num2)
+	}
 
-  doAdd(10, 20); // 30
+	doAdd(10, 20) // 30
+}
+// this
+{
+	function King() {
+		this.royaltyName = "Henry"
+		// this引用King的实例
+		setTimeout(() => console.log(this.royaltyName), 1000)
+	}
+
+	function Queen() {
+		this.royaltyName = "Elizabeth"
+		setTimeout(function () {
+			// this 引用window对象
+			console.log(this.royaltyName)
+		}, 1000)
+	}
+
+	new King(); // Henry
+	new Queen(); // undefined
+
 }
