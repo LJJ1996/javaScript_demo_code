@@ -65,7 +65,37 @@
 		}, 1000)
 	}
 
-	new King(); // Henry
-	new Queen(); // undefined
+	new King() // Henry
+	new Queen() // undefined
+}
+
+// 闭包中的this
+{
+	window.identity = "The window"
+	let object = {
+		identity: "My Object",
+		getIndentityFunc() {
+			return function () {
+				return this.identity
+			}
+		},
+	}
+
+	console.log(object.getIndentityFunc()()) // The window
+}
+
+{
+	window.identity = "The window"
+	let object = {
+		identity: "My Object",
+		getIndentity() {
+			return this.identity
+		},
+	}
+
+	object.getIndentity(); // My Object
+	(object.getIndentity)(); // My Object
+	(object.getIndentity = object.getIndentity)(); // The Window
+
 
 }
