@@ -1,16 +1,34 @@
 {
-	try {
-		throw new Error("foo")
-	} catch (e) {
-		console.log(e) // Error: foo
-	}
+  try {
+    throw new Error("foo");
+  } catch (e) {
+    console.log(e); // Error: foo
+  }
   // Promise.reject抛出的异常，try/catch不能捕获
   // 可以用.catch(e => {console.log(e)})捕获promise的错误
-	try {
-		Promise.reject(new Error("bar"))
-	} catch (e) {
-		console.log(e)
-	}
+  try {
+    Promise.reject(new Error("bar"));
+  } catch (e) {
+    console.log(e);
+  }
 
-	// Uncaught (in promise) Error: bar
+  // Uncaught (in promise) Error: bar
+}
+
+{
+  async function foo() {
+    console.log(await Promise.resolve("foo"));
+  }
+
+  async function bar() {
+    console.log(await "bar");
+  }
+
+  async function baz() {
+    console.log("baz");
+  }
+
+  foo();
+  bar();
+  baz();
 }
